@@ -1,22 +1,18 @@
 #!/bin/bash
 
 # Backup your pictures
-
+#
 # By Juan C. Riano
-
+#
 # This script backs up your JPG or JPEG pictures organizing them into folders by year and month.
 # Folders are created only if they do not already exist.
-
+# Gets directories from dirs.json.
+#
 # Dependencies: grep, awk, rsync, exif, jq.
 
+# set -x
 
-# Get directories from dirs.json
-#PICSSOURCE=~/Dropbox/pics
-#PICSDESTINATION='/media/jriano/T2/Familia-Riano-Fotos/'
-
-PICSSOURCE=$( cat dirs.json | jq -r '.source' )
-PICSDESTINATION=$( cat dirs.json | jq -r '.destination' )
-
+# Make sure environment is proper
 BLACKWHOLE=$( which exif )
 if ! [ "$?" -eq "0"  ]; then
 	echo "exif is missing, please install."
@@ -45,6 +41,14 @@ if [ ! -d "$PICSDESTINATION" ] || [ ! -w "$PICSDESTINATION" ]; then
     exit 1
 fi
 
+# Lets start working!
+PICSSOURCE=$( cat dirs.json | jq -r '.source' )
+PICSDESTINATION=$( cat dirs.json | jq -r '.destination' )
+
+# Deal with spaces in names
+OLD_IFS=$IFS
+IFS=$'\n'
+
 for file in $( find "$PICSSOURCE" -regextype posix-awk -iregex ".*\.(jpeg|jpg)$" )
 do
 	WHOLESTR=$( exif "$file" | grep 'Date and Time' | grep 'Origi' )
@@ -59,7 +63,7 @@ do
 		THEFOLDER="$PICSDESTINATION/$THEYEAR-$THEMONTH"	# Folder in format yyyy-mm
 	fi
 
-	echo "Source:      $file"
+	echo "Source File: $file"
 	echo "Destination: $THEFOLDER"
 
 	# Create folder, ignore if folder already exists, and copy files
@@ -69,7 +73,7 @@ do
 	rsync -hz "$file" "$THEFOLDER"
 	if [ "$?" -eq "0" ]; then
 		rm -rf "$file"
-		echo "$file removed from source"
+		echo "$file backed up and removed from source"
 		echo ""
 	else
 		echo "Failed to backup $file"
@@ -78,3 +82,6 @@ do
 	fi
 done
 echo "Completed backing up pictures."
+
+# Restore IFS
+IFS=$OLD_IFS
