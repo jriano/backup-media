@@ -42,6 +42,7 @@ if [ ! -d "$PICSDESTINATION" ] || [ ! -w "$PICSDESTINATION" ]; then
 fi
 
 # Lets start working!
+. pics_functions.sh
 PICSSOURCE=$( cat dirs.json | jq -r '.source' )
 PICSDESTINATION=$( cat dirs.json | jq -r '.destination' )
 
@@ -70,6 +71,7 @@ do
 	$( mkdir -p "$THEFOLDER")
 	#mv "$file" "$THEFOLDER"
 	#cp --backup=numbered  "$file" "$THEFOLDER"
+	rename_pic_if_exists "$file"
 	rsync -hz "$file" "$THEFOLDER"
 	if [ "$?" -eq "0" ]; then
 		rm -rf "$file"
