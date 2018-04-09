@@ -71,7 +71,7 @@ do
 	$( mkdir -p "$THEFOLDER")
 	#mv "$file" "$THEFOLDER"
 	#cp --backup=numbered  "$file" "$THEFOLDER"
-	rename_pic_if_exists "$file"
+	rename_pic_if_exists "$file" "$THEFOLDER"
 	rsync -hz "$file" "$THEFOLDER"
 	if [ "$?" -eq "0" ]; then
 		rm -rf "$file"

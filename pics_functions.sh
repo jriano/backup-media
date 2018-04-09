@@ -3,29 +3,36 @@ rename_pic_if_exists() {
     # $file is the name you want o use to save the file as
 
     local file_string
-    local new_file_string
+    local folder
+
+    local fpath
+    local fbase
+    local fpref
+    local fext
+    local existing_file
+    local new_file_name
+    local whole_string
+    local the_date
 
     file_string="$1"
-    new_file_string="$1"
+    folder="$2"
 
-    if [ -f "$file_string" ]; then
-        # File exists, then attach date to it and move on!
+    fpath=${file_string%/*}
+    fbase=${file_string##*/}
+    fpref=${fbase%.*}
+    fext=${fbase##*.}
 
-        local fpath
-        local fbase
-        local fpref
-        local fext
-        local date_string
+    existing_file="$folder/$fbase"
 
-        fpath=${file_string%/*}
-        fbase=${file_string##*/}
-        fpref=${fbase%.*}
-        fext=${fbase##*.}
+    if [ -f "$existing_file" ]; then
+        # File exists, rename it
+        whole_string=$( exif "$existing_file" | grep 'Date and Time' | grep 'Origi' )
+        the_date=$( echo "$whole_string" | awk '{split($0,arr,"|"); print arr[2]}' | awk -F'[: ]' '{print $1$2$3$4$5$6}' )
 
-        fdate=$( date +"%Y%m%d-%H%M%S" )
+        new_file_name="$folder/$fpref_$the_date.$fext"
 
-        new_file_string="$fpath/$fpref_$fdate.fext"
-    fi
+        echo "File exists: $file_string"
+        echo "Renaming to $new_file_name"
 
-    echo "$new_file_string"
+        mv "$file_string" "$new_file_name"
 }
