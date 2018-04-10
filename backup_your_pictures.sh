@@ -12,6 +12,11 @@
 
 # set -x
 
+# Lets start working!
+. pics_functions.sh
+PICSSOURCE=$( cat dirs.json | jq -r '.source' )
+PICSDESTINATION=$( cat dirs.json | jq -r '.destination' )
+
 # Make sure environment is proper
 BLACKWHOLE=$( which exif )
 if ! [ "$?" -eq "0"  ]; then
@@ -41,11 +46,6 @@ if [ ! -d "$PICSDESTINATION" ] || [ ! -w "$PICSDESTINATION" ]; then
     exit 1
 fi
 
-# Lets start working!
-. pics_functions.sh
-PICSSOURCE=$( cat dirs.json | jq -r '.source' )
-PICSDESTINATION=$( cat dirs.json | jq -r '.destination' )
-
 # Deal with spaces in names
 OLD_IFS=$IFS
 IFS=$'\n'
@@ -69,8 +69,6 @@ do
 
 	# Create folder, ignore if folder already exists, and copy files
 	$( mkdir -p "$THEFOLDER")
-	#mv "$file" "$THEFOLDER"
-	#cp --backup=numbered  "$file" "$THEFOLDER"
 	rename_pic_if_exists "$file" "$THEFOLDER"
 	rsync -hz "$file" "$THEFOLDER"
 	if [ "$?" -eq "0" ]; then
