@@ -1,4 +1,4 @@
-rename_pic_if_exists() {
+rename_file_if_exists() {
     # Requires 2 parameters:
     # $file         <== The name of the file bo backup
     # $THEFOLDER    <== Where the file will be backedup
@@ -55,4 +55,51 @@ rename_pic_if_exists() {
             mv "$existing_file" "$new_file_name"
         fi
     fi
+}
+
+extract_info() {
+    # Returns a string with the following info
+    # type YYYY MM DD
+
+    local file_name
+
+    local file_type
+    local file_date
+    local whole_string
+    local file_date
+    local file_year
+    local file_month
+    local has_exif
+    local return_string
+
+    file_name=$1
+
+    # file type can be image, video, text, ...
+    file_type=$( file -i $file_name | awk -F'[:;]' '{print $2}' | awk -F'[ /]' '{print $2}')
+
+    if [ "$file_name" == "video" ] || [ "$file_name" == "image" ]; then
+        # Check if file has exif information
+        has_exif=$( exif $file_name 2>&1 | awk 'NR==1{print $1}' )
+        if ![ "$has_exif" == "Corrupt" ]; then
+            # Have exif, use it!
+            whole_string=$( exif "$file_name" | grep 'Date and Time' | grep 'Origi' )
+            file_date=$( echo "$whole_string" | awk '{split($0,arr,"|"); print arr[2]}' )
+            file_year=$( echo "$file_date" | awk '{split($0,arr,":"); print arr[1]}' )
+            file_month=$( echo "$file_date" | awk '{split($0,arr,":"); print arr[2]}' )
+
+            return_string="$file_type $file_year $file_month"
+        else
+            # Does not have exif
+            file_date=$( stat "$file_name" | grep Modify | awk '{print $2}' )
+            file_year=$( echo "$file_date" | awk -F'-' '{print $1}' )
+            file_month=$( echo "$file_date" | awk -F'-' '{print $2}' )
+
+            return_string="$file_type $file_year $file_month"
+        fi
+    else
+        # Don't do anything, just return the file type
+        return_string="$file_type"
+    fi
+
+    echo "$return_string"
 }

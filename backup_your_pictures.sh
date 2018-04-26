@@ -50,12 +50,14 @@ fi
 OLD_IFS=$IFS
 IFS=$'\n'
 
-for file in $( find "$PICSSOURCE" -regextype posix-awk -iregex ".*\.(jpeg|jpg)$" )
+for file in $( find "$PICSSOURCE" )
 do
-	WHOLESTR=$( exif "$file" | grep 'Date and Time' | grep 'Origi' )
-	THEDATE=$( echo "$WHOLESTR" | awk '{split($0,arr,"|"); print arr[2]}' )
-	THEYEAR=$( echo "$THEDATE" | awk '{split($0,arr,":"); print arr[1]}' )
-	THEMONTH=$( echo "$THEDATE" | awk '{split($0,arr,":"); print arr[2]}' )
+	WHOLESTR=$( extract_info "$file" )
+	FILETYPE=$( echo "$WHOLESTR" | awk '{print $1}' )
+	THEYEAR=$( echo "$WHOLESTR" | awk '{print $2}' )
+	THEMONTH=$( echo "$WHOLESTR" | awk '{print $3}' )
+
+	# I AM HERE RIGHT NOW
 
 	if [[ "$THEYEAR" == "" ]]	# Is there exif info for this picture?
 	then
@@ -69,7 +71,7 @@ do
 
 	# Create folder, ignore if folder already exists, and copy files
 	$( mkdir -p "$THEFOLDER")
-	rename_pic_if_exists "$file" "$THEFOLDER"
+	rename_file_if_exists "$file" "$THEFOLDER"
 	rsync -hz "$file" "$THEFOLDER"
 	if [ "$?" -eq "0" ]; then
 		rm -rf "$file"

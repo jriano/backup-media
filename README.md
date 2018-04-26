@@ -5,3 +5,11 @@
     - https://stackoverflow.com/questions/17286290/rsync-checksum-only-for-same-size-files
 - create log by run
 - open picture in viewer and mark it as special
+
+done Create a function that returns a string like "yyyy mm"
+then the main program uses the date string to extract the info it needs
+
+I need to rename the functions file
+function returns type year mont
+I need to allow json to have the two folders, one for pics, one for videos
+I need the main program to save to those folders accordingly
