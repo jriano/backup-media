@@ -4,18 +4,20 @@
 #
 # By Juan C. Riano
 #
-# This script backs up your JPG or JPEG pictures organizing them into folders by year and month.
+# This script backs up your images and videos organizing them into folders by year and month.
 # Folders are created only if they do not already exist.
 # Gets directories from dirs.json.
 #
-# Dependencies: grep, awk, rsync, exif, jq.
+# Dependencies: grep, awk, rsync, exif, jq, stat.
 
-# set -x
+#set -x
 
 # Lets start working!
 . pics_functions.sh
-PICSSOURCE=$( cat dirs.json | jq -r '.source' )
-PICSDESTINATION=$( cat dirs.json | jq -r '.destination' )
+SOURCE=$( cat dirs.json | jq -r '.source' )
+PICSDESTINATION=$( cat dirs.json | jq -r '.picsdestination' )
+VIDSDESTINATION=$( cat dirs.json | jq -r '.vidsdestination' )
+
 
 # Make sure environment is proper
 BLACKWHOLE=$( which exif )
@@ -37,12 +39,16 @@ if ! [ -f "./dirs.json" ]; then
 	echo "json configuration file is missing."
 	exit 1
 fi
-if [ ! -d "$PICSSOURCE" ] || [ ! -w "$PICSSOURCE" ]; then
-    echo "Picture source directory does not exist or is not writable."
+if [ ! -d "$SOURCE" ] || [ ! -w "$SOURCE" ]; then
+    echo "Source directory does not exist or is not writable."
     exit 1
 fi
 if [ ! -d "$PICSDESTINATION" ] || [ ! -w "$PICSDESTINATION" ]; then
-    echo "Picture destination directory does not exist or is not writable."
+    echo "Pictures destination directory does not exist or is not writable."
+    exit 1
+fi
+if [ ! -d "$VIDSDESTINATION" ] || [ ! -w "$VIDSDESTINATION" ]; then
+    echo "Videos destination directory does not exist or is not writable."
     exit 1
 fi
 
@@ -50,23 +56,38 @@ fi
 OLD_IFS=$IFS
 IFS=$'\n'
 
-for file in $( find "$PICSSOURCE" )
+for file in $( find "$SOURCE" -type f )
 do
 	WHOLESTR=$( extract_info "$file" )
-	FILETYPE=$( echo "$WHOLESTR" | awk '{print $1}' )
-	THEYEAR=$( echo "$WHOLESTR" | awk '{print $2}' )
-	THEMONTH=$( echo "$WHOLESTR" | awk '{print $3}' )
+	ISMEDIA=$( echo "$WHOLESTR" | awk '{print $1}' )
+	FILETYPE=$( echo "$WHOLESTR" | awk '{print $2}' )
+	THEYEAR=$( echo "$WHOLESTR" | awk '{print $3}' )
+	THEMONTH=$( echo "$WHOLESTR" | awk '{print $4}' )
 
-	# I AM HERE RIGHT NOW
-
-	if [[ "$THEYEAR" == "" ]]	# Is there exif info for this picture?
-	then
-		THEFOLDER="$PICSDESTINATION/no-date"	# Pictures with no exif info.
-	else
-		THEFOLDER="$PICSDESTINATION/$THEYEAR-$THEMONTH"	# Folder in format yyyy-mm
+	# If it is not a media file, then skip this file
+	if [ "$ISMEDIA" == "other" ]; then
+		# pass
+		:
 	fi
 
+	# Save file in year/month directory
+	if [ "$THEYEAR" == "" ]; then
+		if [ "$FILETYPE" == "image" ]; then
+			THEFOLDER="$PICSDESTINATION/no-date"
+		else
+			THEFOLDER="$VIDSDESTINATION/no-date"
+		fi
+	else
+		if [ "$FILETYPE" == "image" ]; then
+			THEFOLDER="$PICSDESTINATION/$THEYEAR-$THEMONTH"	# Folder in format yyyy-mm
+		else
+			THEFOLDER="$VIDSDESTINATION/$THEYEAR-$THEMONTH"	# Folder in format yyyy-mm
+		fi
+	fi
+
+	echo "string: $WHOLESTR"
 	echo "Source File: $file"
+	echo "File type:   $FILETYPE"
 	echo "Destination: $THEFOLDER"
 
 	# Create folder, ignore if folder already exists, and copy files
