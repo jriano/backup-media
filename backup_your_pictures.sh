@@ -56,7 +56,7 @@ fi
 OLD_IFS=$IFS
 IFS=$'\n'
 
-for file in $( find "$SOURCE" -type f )
+for file in $( find "$SOURCE" -type f -not -name ".*" )
 do
 	WHOLESTR=$( extract_info "$file" )
 	ISMEDIA=$( echo "$WHOLESTR" | awk '{print $1}' )
@@ -71,7 +71,7 @@ do
 	fi
 
 	# Save file in year/month directory
-	if [ "$THEYEAR" == "" ]; then
+	if [ "$THEYEAR" == "no-date" ]; then
 		if [ "$FILETYPE" == "image" ]; then
 			THEFOLDER="$PICSDESTINATION/no-date"
 		else
@@ -85,8 +85,8 @@ do
 		fi
 	fi
 
-	echo "string: $WHOLESTR"
 	echo "Source File: $file"
+	echo "string: $WHOLESTR"
 	echo "File type:   $FILETYPE"
 	echo "Destination: $THEFOLDER"
 

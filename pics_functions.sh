@@ -27,8 +27,6 @@ rename_file_if_exists() {
     fpath=${file_to_backup%/*}
     fbase=${file_to_backup##*/}
     fprefix=${fbase%.*}
-    echo "prefix:"
-    echo "$fprefix"
     fext=${fbase##*.}
 
     existing_file="$folder/$fbase"
@@ -43,8 +41,7 @@ rename_file_if_exists() {
             the_date=$( echo "$whole_string" | awk '{split($0,arr,"|"); print arr[2]}' | awk -F'[: ]' '{print $1$2$3$4$5$6}' )
             the_date="$the_date"
 
-            echo "prefix:"
-            echo "$fprefix"
+            echo "prefix: $prefix"
 
             new_file_name="$folder/$fprefix-$the_date.$fext"
 
@@ -74,6 +71,7 @@ extract_info() {
     local file_year
     local file_month
     local has_exif
+    local tool_used
     local return_string
 
     file_name=$1
@@ -90,16 +88,19 @@ extract_info() {
             file_date=$( echo "$whole_string" | awk '{split($0,arr,"|"); print arr[2]}' )
             file_year=$( echo "$file_date" | awk '{split($0,arr,":"); print arr[1]}' )
             file_month=$( echo "$file_date" | awk '{split($0,arr,":"); print arr[2]}' )
-
-            return_string="media $file_type $file_year $file_month exif"
+            tool_used="exif"
         else
             # Does not have exif
             file_date=$( stat "$file_name" | grep Modify | awk '{print $2}' )
             file_year=$( echo "$file_date" | awk -F'-' '{print $1}' )
             file_month=$( echo "$file_date" | awk -F'-' '{print $2}' )
-
-            return_string="media $file_type $file_year $file_month stat"
+            tool_used="stat"
         fi
+        if [ "$file_year" == "" ] || [ "$file_month" == "" ]; then
+            file_year="no-date"
+            file_month="no-date"
+        fi
+        return_string="media $file_type $file_year $file_month $tool_used"
     else
         # Don't do anything, just return "skip filetype"
         return_string="other $file_type"

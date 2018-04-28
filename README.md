@@ -10,6 +10,8 @@ done Create a function that returns a string like "yyyy mm"
 then the main program uses the date string to extract the info it needs
 
 I need to rename the functions file
-function returns type year mont
-I need to allow json to have the two folders, one for pics, one for videos
-I need the main program to save to those folders accordingly
+
+
+
+for some reason a directory - is created
+it looks like I cannot determine some file types may be the mime option is not always good
