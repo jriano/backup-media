@@ -77,7 +77,19 @@ extract_info() {
     file_name=$1
 
     # file type can be image, video, text, ...
-    file_type=$( file -i $file_name | awk -F'[:;]' '{print $2}' | awk -F'[ /]' '{print $2}')
+    #file_type=$( file -i $file_name | awk -F'[:;]' '{print $2}' | awk -F'[ /]' '{print $2}')
+    file_type=$( file $file_name | grep -iE 'media|video|stream' )
+    if [ -z "$file_type" ]; then
+        file_type=$( file $file_name | grep -iE 'image' )
+        if [ -z "$file_type" ]; then
+            file_type="other"
+        else
+            file_type="image"
+        fi
+    else
+        file_type="video"
+    fi
+
 
     if [ "$file_type" == "video" ] || [ "$file_type" == "image" ]; then
         # Check if file has exif information
