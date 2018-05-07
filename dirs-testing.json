@@ -1,5 +1,6 @@
 {
-    "source": "/home/juan/testing_source",
-    "picsdestination": "/home/juan/pics-testing_destination",
-    "vidsdestination": "/home/juan/vids-testing_destination"
+    "source": "/home/juan/testing/source",
+    "picsdestination": "/home/juan/testing/pics_destination",
+    "vidsdestination": "/home/juan/testing/vids_destination",
+    "prime": "/home/juan/testing/prime"
 }

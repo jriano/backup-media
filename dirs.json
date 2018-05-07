@@ -1,5 +1,6 @@
 {
-    "source": "/home/juan/testing_source",
-    "picsdestination": "/media/juan/T2Backup/Familia-Riano-Fotos",
-    "vidsdestination": "/media/juan/T2Backup/Familia-Riano-Videos"
+    "source": "/home/juan/Pictures",
+    "picsdestination": "/media/juan/T2/Familia-Riano-Fotos",
+    "vidsdestination": "/media/juan/T2/Familia-Riano-Videos",
+    "prime": "/media/juan/T2/prime-Fotos"
 }
