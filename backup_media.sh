@@ -14,9 +14,10 @@
 
 # Lets start working!
 . backup_media_functions.sh
-SOURCE=$( cat dirs.json | jq -r '.source' )
-PICSDESTINATION=$( cat dirs.json | jq -r '.picsdestination' )
-VIDSDESTINATION=$( cat dirs.json | jq -r '.vidsdestination' )
+DIRSFILE="dirs.json"
+SOURCE=$( cat "${DIRSFILE}" | jq -r '.source' )
+PICSDESTINATION=$( cat "${DIRSFILE}" | jq -r '.picsdestination' )
+VIDSDESTINATION=$( cat "${DIRSFILE}" | jq -r '.vidsdestination' )
 
 
 # Make sure environment is proper
@@ -96,7 +97,7 @@ do
 	rsync -hz "$file" "$THEFOLDER"
 	if [ "$?" -eq "0" ]; then
 		rm -rf "$file"
-		echo "$file backed up and removed from source"
+		#echo "$file backed up and removed from source"
 		echo ""
 	else
 		echo "Failed to backup $file"

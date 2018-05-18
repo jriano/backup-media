@@ -41,7 +41,7 @@ rename_file_if_exists() {
             the_date=$( echo "$whole_string" | awk '{split($0,arr,"|"); print arr[2]}' | awk -F'[: ]' '{print $1$2$3$4$5$6}' )
             the_date="$the_date"
 
-            echo "prefix: $prefix"
+            echo "prefix: $fprefix"
 
             new_file_name="$folder/$fprefix-$the_date.$fext"
 
@@ -65,7 +65,6 @@ extract_info() {
     local file_name
 
     local file_type
-    local file_date
     local whole_string
     local file_date
     local file_year
@@ -77,10 +76,10 @@ extract_info() {
     file_name=$1
 
     # file type can be image, video, text, ...
-    #file_type=$( file -i $file_name | awk -F'[:;]' '{print $2}' | awk -F'[ /]' '{print $2}')
-    file_type=$( file $file_name | grep -iE 'media|video|stream' )
+    # file -b   # so that file name which may have "media" is not prepend
+    file_type=$( file -b $file_name | grep -iE 'media|video|stream' )
     if [ -z "$file_type" ]; then
-        file_type=$( file $file_name | grep -iE 'image' )
+        file_type=$( file -b $file_name | grep -iE 'image' )
         if [ -z "$file_type" ]; then
             file_type="other"
         else
@@ -97,9 +96,9 @@ extract_info() {
         if ! [ "$has_exif" == "Corrupt" ]; then
             # Have exif, use it!
             whole_string=$( exif "$file_name" | grep 'Date and Time' | grep 'Origi' )
-            file_date=$( echo "$whole_string" | awk '{split($0,arr,"|"); print arr[2]}' )
-            file_year=$( echo "$file_date" | awk '{split($0,arr,":"); print arr[1]}' )
-            file_month=$( echo "$file_date" | awk '{split($0,arr,":"); print arr[2]}' )
+            file_date=$( echo "$whole_string" | awk -F'|' '{print $2}' | awk '{print $1}' )
+            file_year=$( echo "$file_date" | awk -F':' '{print $1}' )
+            file_month=$( echo "$file_date" | awk -F':' '{print $2}' )
             tool_used="exif"
         else
             # Does not have exif

@@ -6,3 +6,6 @@
 - make all a single file/script
 
 
+- implement prime photos
+- implement prime videos
+
