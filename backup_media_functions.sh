@@ -64,6 +64,7 @@ extract_info() {
 
     local file_name
 
+    local file_ext
     local file_type
     local whole_string
     local file_date
@@ -77,20 +78,34 @@ extract_info() {
 
     # file type can be image, video, text, ...
     # file -b   # so that file name which may have "media" is not prepend
-    file_type=$( file -b $file_name | grep -iE 'media|video|stream' )
-    if [ -z "$file_type" ]; then
-        file_type=$( file -b $file_name | grep -iE 'image' )
-        if [ -z "$file_type" ]; then
-            file_type="other"
-        else
-            file_type="image"
-        fi
-    else
+    # file_type=$( file -b $file_name | grep -iE 'media|video|stream' )
+    # if [ -z "$file_type" ]; then
+    #     file_type=$( file -b $file_name | grep -iE 'image' )
+    #     if [ -z "$file_type" ]; then
+    #         file_type="other"
+    #     else
+    #         file_type="image"
+    #     fi
+    # else
+    #     file_type="video"
+    # fi
+
+
+
+    # file type can be image, video, text, ...
+    # file -b   # so that file name which may have "media" is not prepend
+    file_type=$( file -b --mime-type $file_name | awk -F'/' '{print $1}' )
+
+    # Deal with special file types not handled well by 'file'
+    file_ext=$( echo "$file_name" | grep -oE "(.[a-zA-Z0-9]{3})$" )
+    VIDEO_TYPES=".MTS"
+    file_test=$( echo "$VIDEO_TYPES" | grep "$file_ext" )
+    if ! [ -z "$file_test" ]; then
         file_type="video"
     fi
 
 
-    if [ "$file_type" == "video" ] || [ "$file_type" == "image" ]; then
+    if [ "$file_type" == "video" ] || [ "$file_type" == "image" ] || [ "$file_type" == "audio" ] ; then
         # Check if file has exif information
         has_exif=$( exif $file_name 2>&1 | awk 'NR==1{print $1}' )
         if ! [ "$has_exif" == "Corrupt" ]; then
@@ -113,6 +128,7 @@ extract_info() {
         fi
         return_string="media $file_type $file_year $file_month $tool_used"
     else
+        # Test for special known cases
         # Don't do anything, just return "skip filetype"
         return_string="other $file_type"
     fi
