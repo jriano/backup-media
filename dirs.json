@@ -1,6 +1,7 @@
 {
-    "source": "/home/juan/Pictures",
-    "picsdestination": "/media/juan/T2/Familia-Riano-Fotos",
-    "vidsdestination": "/media/juan/T2/Familia-Riano-Videos",
-    "prime": "/media/juan/T2/prime-Fotos"
+    "source": "/home/juan/testing/source folder/media",
+    "picsdestination": "/home/juan/testing/pics_destination",
+    "vidsdestination": "/home/juan/testing/vids_destination",
+    "audiodestination": "/home/juan/testing/audios_destination",
+    "prime": "/home/juan/testing/prime"
 }

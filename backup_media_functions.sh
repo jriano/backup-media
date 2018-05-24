@@ -97,11 +97,23 @@ extract_info() {
     file_type=$( file -b --mime-type $file_name | awk -F'/' '{print $1}' )
 
     # Deal with special file types not handled well by 'file'
-    file_ext=$( echo "$file_name" | grep -oE "(.[a-zA-Z0-9]{3})$" )
-    VIDEO_TYPES=".MTS"
-    file_test=$( echo "$VIDEO_TYPES" | grep "$file_ext" )
+    file_ext=$( echo "$file_name" | grep -oE "([.][a-zA-Z0-9]{3,})$" )
+    VIDEO_TYPES=".MTS .m2ts"
+    file_test=$( echo "$VIDEO_TYPES" | grep -i "$file_ext" )
     if ! [ -z "$file_test" ]; then
         file_type="video"
+    fi
+
+    IMAGE_TYPES=""
+    file_test=$( echo "$IMAGE_TYPES" | grep -i "$file_ext" )
+    if ! [ -z "$file_test" ]; then
+        file_type="image"
+    fi
+
+    AUDIO_TYPES=""
+    file_test=$( echo "$AUDIO_TYPES" | grep -i "$file_ext" )
+    if ! [ -z "$file_test" ]; then
+        file_type="audio"
     fi
 
 
@@ -128,9 +140,8 @@ extract_info() {
         fi
         return_string="media $file_type $file_year $file_month $tool_used"
     else
-        # Test for special known cases
         # Don't do anything, just return "skip filetype"
-        return_string="other $file_type"
+        return_string="other $file_type no-date no-date no-tool"
     fi
 
     echo "$return_string"

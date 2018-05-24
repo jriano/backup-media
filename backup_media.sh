@@ -18,6 +18,7 @@ DIRSFILE="dirs.json"
 SOURCE=$( cat "${DIRSFILE}" | jq -r '.source' )
 PICSDESTINATION=$( cat "${DIRSFILE}" | jq -r '.picsdestination' )
 VIDSDESTINATION=$( cat "${DIRSFILE}" | jq -r '.vidsdestination' )
+AUDIOSDESTINATION=$( cat "${DIRSFILE}" | jq -r '.vidsdestination' )
 
 
 # Make sure environment is proper
@@ -48,7 +49,7 @@ if [ ! -d "$PICSDESTINATION" ] || [ ! -w "$PICSDESTINATION" ]; then
     echo "Pictures destination directory does not exist or is not writable."
     exit 1
 fi
-if [ ! -d "$VIDSDESTINATION" ] || [ ! -w "$VIDSDESTINATION" ]; then
+if [ ! -d "$VIDSDESTINATION" ] || [ ! -w "$VIDSDESTINATION" ] || [ ! -w "$AUDIOSDESTINATION" ]; then
     echo "Videos destination directory does not exist or is not writable."
     exit 1
 fi
@@ -68,13 +69,14 @@ do
 	# If it is not a media file, then skip this file
 	if [ "$ISMEDIA" == "other" ]; then
 		# pass
-		:
+		continue
 	fi
 
 	# Save file in year/month directory
 	if [ "$THEYEAR" == "no-date" ]; then
 		if [ "$FILETYPE" == "image" ]; then
 			THEFOLDER="$PICSDESTINATION/no-date"
+		elif
 		else
 			THEFOLDER="$VIDSDESTINATION/no-date"
 		fi

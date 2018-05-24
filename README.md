@@ -9,3 +9,4 @@
 - implement prime photos
 - implement prime videos
 
+mp3 not dealt with properly, may be because not dealing yet with AUDIO in if/else which I am working on right now
