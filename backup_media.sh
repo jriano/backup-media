@@ -18,7 +18,7 @@ DIRSFILE="dirs.json"
 SOURCE=$( cat "${DIRSFILE}" | jq -r '.source' )
 PICSDESTINATION=$( cat "${DIRSFILE}" | jq -r '.picsdestination' )
 VIDSDESTINATION=$( cat "${DIRSFILE}" | jq -r '.vidsdestination' )
-AUDIOSDESTINATION=$( cat "${DIRSFILE}" | jq -r '.vidsdestination' )
+AUDIOSDESTINATION=$( cat "${DIRSFILE}" | jq -r '.audiosdestination' )
 
 
 # Make sure environment is proper
@@ -76,15 +76,18 @@ do
 	if [ "$THEYEAR" == "no-date" ]; then
 		if [ "$FILETYPE" == "image" ]; then
 			THEFOLDER="$PICSDESTINATION/no-date"
-		elif
+		elif [ "$FILETYPE" == "audio" ]; then
+			THEFOLDER="$AUDIOSDESTINATION/no-date"
 		else
 			THEFOLDER="$VIDSDESTINATION/no-date"
 		fi
 	else
 		if [ "$FILETYPE" == "image" ]; then
-			THEFOLDER="$PICSDESTINATION/$THEYEAR-$THEMONTH"	# Folder in format yyyy-mm
+			THEFOLDER="$PICSDESTINATION/$THEYEAR-$THEMONTH"		# Folder in format yyyy-mm
+		elif [ "$FILETYPE" == "audio" ]; then
+			THEFOLDER="$AUDIOSDESTINATION/$THEYEAR-$THEMONTH"
 		else
-			THEFOLDER="$VIDSDESTINATION/$THEYEAR-$THEMONTH"	# Folder in format yyyy-mm
+			THEFOLDER="$VIDSDESTINATION/$THEYEAR-$THEMONTH"
 		fi
 	fi
 

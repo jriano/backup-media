@@ -11,7 +11,6 @@ rename_file_if_exists() {
 
     local file_to_backup
     local folder
-
     local fpath
     local fbase
     local fprefix
@@ -63,7 +62,6 @@ extract_info() {
     # the second, filetype clarifies exactely by saying "video" or "image"
 
     local file_name
-
     local file_ext
     local file_type
     local whole_string
@@ -78,39 +76,24 @@ extract_info() {
 
     # file type can be image, video, text, ...
     # file -b   # so that file name which may have "media" is not prepend
-    # file_type=$( file -b $file_name | grep -iE 'media|video|stream' )
-    # if [ -z "$file_type" ]; then
-    #     file_type=$( file -b $file_name | grep -iE 'image' )
-    #     if [ -z "$file_type" ]; then
-    #         file_type="other"
-    #     else
-    #         file_type="image"
-    #     fi
-    # else
-    #     file_type="video"
-    # fi
-
-
-
-    # file type can be image, video, text, ...
-    # file -b   # so that file name which may have "media" is not prepend
     file_type=$( file -b --mime-type $file_name | awk -F'/' '{print $1}' )
 
     # Deal with special file types not handled well by 'file'
     file_ext=$( echo "$file_name" | grep -oE "([.][a-zA-Z0-9]{3,})$" )
-    VIDEO_TYPES=".MTS .m2ts"
+
+    VIDEO_TYPES=".mts .m2ts .mp4 .m4b .mpeg .avi .flv .wmv .mov"
     file_test=$( echo "$VIDEO_TYPES" | grep -i "$file_ext" )
     if ! [ -z "$file_test" ]; then
         file_type="video"
     fi
 
-    IMAGE_TYPES=""
+    IMAGE_TYPES=".jpeg .jfif .tiff .gif .bmp .png .ppm .pgm .pbm .pnp .jpeg"
     file_test=$( echo "$IMAGE_TYPES" | grep -i "$file_ext" )
     if ! [ -z "$file_test" ]; then
         file_type="image"
     fi
 
-    AUDIO_TYPES=""
+    AUDIO_TYPES=".mp3 .3ga .aa .aa3 .aac .aax .abc .ac3 .wma .wav"
     file_test=$( echo "$AUDIO_TYPES" | grep -i "$file_ext" )
     if ! [ -z "$file_test" ]; then
         file_type="audio"
