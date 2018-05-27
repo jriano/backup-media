@@ -53,6 +53,10 @@ if [ ! -d "$VIDSDESTINATION" ] || [ ! -w "$VIDSDESTINATION" ]; then
     echo "Videos destination directory does not exist or is not writable."
     exit 1
 fi
+if [ ! -d "$AUDIOSDESTINATION" ] || [ ! -w "$AUDIOSDESTINATION" ]; then
+    echo "Audios destination directory does not exist or is not writable."
+    exit 1
+fi
 
 # Deal with spaces in names
 OLD_IFS=$IFS
