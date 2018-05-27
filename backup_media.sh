@@ -49,7 +49,7 @@ if [ ! -d "$PICSDESTINATION" ] || [ ! -w "$PICSDESTINATION" ]; then
     echo "Pictures destination directory does not exist or is not writable."
     exit 1
 fi
-if [ ! -d "$VIDSDESTINATION" ] || [ ! -w "$VIDSDESTINATION" ] || [ ! -w "$AUDIOSDESTINATION" ]; then
+if [ ! -d "$VIDSDESTINATION" ] || [ ! -w "$VIDSDESTINATION" ]; then
     echo "Videos destination directory does not exist or is not writable."
     exit 1
 fi
