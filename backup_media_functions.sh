@@ -1,7 +1,7 @@
 rename_file_if_exists() {
     # Requires 2 parameters:
-    # $file         <== The name of the file bo backup
-    # $THEFOLDER    <== Where the file will be backedup
+    # $file         <== The name of the file to backup
+    # $THEFOLDER    <== Where the file will be backed up
     #
     # If the file name is already present in the folder, an md5 checksum is done,
     # if they are different, the existing file is renamed.
