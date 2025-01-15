@@ -10,7 +10,7 @@ find "$SOURCE" -type f -name "*.MOV" | while read -r mov_file; do
     # Get the corresponding .HEIC file by replacing the extension
     heic_file="${mov_file%.MOV}.HEIC"
     
-    # Check if the .HEIC file exists
+    # Delete .MOV file if corresponding .HEIC file exists
     if [ -f "$heic_file" ]; then
         echo "Deleting: $mov_file (matched with $heic_file)"
         rm "$mov_file"

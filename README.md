@@ -1,22 +1,28 @@
 # Backup Media
 
-Script:
-./backup_media
+This set of scripts are used to backup pictures, videos and audios from your phone to your pc. The folder locations for source and destination must be given in the file
 
-This script uses the file locations given in
+```text
 dirs.json
+```
 
-to backup audio, video and images.
+All scripts use the file locations given there.
 
-## To do
 
-- Remove directories if they are empty
-- create log by run
-- open picture in viewer and mark it as special
-- make all a single file/script
-- implement prime photos
-- implement prime videos
+### Delete live photos (.MOV) and convert .HEIC to .JPG
 
+Run the helper scripts to remove .MOV live pictures and to convert the iPhone pictures to .JPG before runing the main backup script. This will help you save storage. Run them in the order shown next:
+
+```bash
+./helper_1_delete_iphone_live_pictures.sh 
+./helper_2_convert_heic_to_jpg_pictures.sh 
+```
+
+## Backup up
+
+```bash
+./backup_media.sh
+```
 
 ## Additional help
 
@@ -30,8 +36,12 @@ ifuse ~/iphone
 fusermount -u ~/iphone
 ```
 
-### Delete live photos (.MOV) 
 
-This script deletes .MOV files that have a matching SHEIC file.
+## To do
 
-
+- Remove directories if they are empty
+- create log by run
+- open picture in viewer and mark it as special
+- make all a single file/script
+- implement prime photos
+- implement prime videos
