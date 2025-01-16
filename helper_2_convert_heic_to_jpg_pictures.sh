@@ -2,6 +2,8 @@
 
 # Dependencies: imagemagick libheif1
 
+# Converts... deletes
+
 
 DIRSFILE="dirs.json"
 SOURCE=$( cat "${DIRSFILE}" | jq -r '.source' )
@@ -25,19 +27,24 @@ find "$SOURCE" -type f -name "*.HEIC" | while read -r heic_file; do
     access_time=$(stat -c %x "$heic_file")
     modify_time=$(stat -c %y "$heic_file")
     create_time=$(stat -c %w "$heic_file" 2>/dev/null)
-    
-    echo "Converting: $heic_file -> $jpg_file"
-    #if imagemagick convert "$heic_file" "$jpg_file"; then
-    if $CONVERT_CMD "$heic_file" "$jpg_file"; then
 
-        # Restore the timestamps to the new .JPG file
+    if $CONVERT_CMD "$heic_file" "$jpg_file"; then
+        echo "Conversion successful for: \"$heic_file\""
+
+        # Restore the modify time first (most important)
         touch -d "$modify_time" "$jpg_file"
+
+        # Optionally restore the create time if available, but ensure modify time is reapplied
         if [ -n "$create_time" ]; then
             touch -d "$create_time" "$jpg_file"
+            touch -d "$modify_time" "$jpg_file"  # Reapply modify time after setting create time
         fi
 
+        echo "Timestamps preserved for: \"$jpg_file\""
+
+        # delete .HEIC file
         rm "$heic_file"
     else
-        echo "Conversion failed for: $heic_file"
+        echo "Conversion failed for: \"$heic_file\""
     fi
 done
