@@ -1,15 +1,15 @@
-# Backup Media
+# Scripts to Backup Media
 
-This set of scripts are used to backup pictures, videos and audios from your phone to your pc. The folder locations for source and destination must be given in the file
+This set of scripts are used to backup pictures, videos and audios from your phone to your pc. The folder locations for source and destination must be given in the file.
+
+
+All scripts use the source and destination folders provided in the following file, make sure to configure that before running the scripts:
 
 ```text
 dirs.json
 ```
 
-All scripts use the file locations given there.
-
-
-### Delete live photos (.MOV) and convert .HEIC to .JPG
+## How to delete live photos (.MOV) and convert .HEIC to .JPG
 
 Run the helper scripts to remove .MOV live pictures and to convert the iPhone pictures to .JPG before runing the main backup script. This will help you save storage. Run them in the order shown next:
 
@@ -20,13 +20,19 @@ Run the helper scripts to remove .MOV live pictures and to convert the iPhone pi
 
 ## Backup up
 
+After the above cleanup, run the main script:
+
 ```bash
 ./backup_media.sh
 ```
 
 ## Additional help
 
-### To import pics from iPhone
+### To import pictures from iPhone
+
+In ubuntu, `ifuse` is an awesome library that allows you to mount the iPhone storage as a regular storage folder, you can then use any file manager to extract the files into your pc. 
+
+To delete the files from your iPhone use your phone's tools, using the pc for that does not give good results.
 
 ```bash
 ## Use ifuse to load the iphone media
