@@ -21,7 +21,8 @@ fi
 # Iterate through all .HEIC files
 find "$SOURCE" -type f -name "*.HEIC" | while read -r heic_file; do
     # Construct the output .JPG file name
-    jpg_file="$SOURCE/$(basename "${heic_file%.HEIC}.JPG")"
+    #jpg_file="$SOURCE/$(basename "${heic_file%.HEIC}.JPG")"
+    jpg_file="${heic_file%.HEIC}.JPG"
 
     # Save the original timestamps
     access_time=$(stat -c %x "$heic_file")
@@ -29,7 +30,8 @@ find "$SOURCE" -type f -name "*.HEIC" | while read -r heic_file; do
     create_time=$(stat -c %w "$heic_file" 2>/dev/null)
 
     if $CONVERT_CMD "$heic_file" "$jpg_file"; then
-        echo "Conversion successful for: \"$heic_file\""
+        echo "Converted: $heic_file"
+        echo "Into: $jpg_file"
 
         # Restore the modify time first (most important)
         touch -d "$modify_time" "$jpg_file"
@@ -40,10 +42,16 @@ find "$SOURCE" -type f -name "*.HEIC" | while read -r heic_file; do
             touch -d "$modify_time" "$jpg_file"  # Reapply modify time after setting create time
         fi
 
-        echo "Timestamps preserved for: \"$jpg_file\""
+        echo "Timestamps preserved."
 
         # delete .HEIC file
-        rm "$heic_file"
+        if rm "$heic_file"; then
+            echo "Deleted $heic_file"
+        else 
+            echo "Could not delete $heic_file"
+        fi
+        echo ""
+
     else
         echo "Conversion failed for: \"$heic_file\""
     fi
